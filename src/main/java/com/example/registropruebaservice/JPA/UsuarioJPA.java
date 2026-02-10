@@ -37,6 +37,9 @@ public class UsuarioJPA {
     @Column(name = "isverified")
     private int isVerified;
 
+    @Column(name = "username")
+    private String username;
+
     public int getIdUsuario() {
         return idUsuario;
     }
@@ -99,6 +102,14 @@ public class UsuarioJPA {
 
     public void setIsVerified(int isVerified) {
         this.isVerified = isVerified;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
 }

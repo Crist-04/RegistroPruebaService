@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "VERIFICATIONTOKEN")
@@ -24,6 +25,9 @@ public class VerificationTokenJPA {
     @OneToOne
     @JoinColumn(name = "idusuario")
     private UsuarioJPA usuario;
+    
+    @Column(name = "expiracion")
+    private LocalDateTime expiracion;
 
     public int getIdToken() {
         return idToken;
@@ -47,6 +51,14 @@ public class VerificationTokenJPA {
 
     public void setUsuario(UsuarioJPA usuario) {
         this.usuario = usuario;
+    }
+
+    public LocalDateTime getExpiracion() {
+        return expiracion;
+    }
+
+    public void setExpiracion(LocalDateTime expiracion) {
+        this.expiracion = expiracion;
     }
 
 }
