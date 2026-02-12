@@ -63,7 +63,7 @@ public class UsuarioJPADAO implements IUsuarioJPA {
 
             result.correct = true;
             result.status = 200;
-            result.object = "Usuario registrado exitosamente. Por favor verifica tu correo electrónico.";
+            result.object = "Usuario registrado exitosamente.Verifica tu correo electrónico.";
             result.data = verificationToken.getToken();
 
         } catch (Exception ex) {

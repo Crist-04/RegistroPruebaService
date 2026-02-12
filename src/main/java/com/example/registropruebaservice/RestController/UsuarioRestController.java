@@ -6,6 +6,7 @@ import com.example.registropruebaservice.DAO.UsuarioJPADAO;
 import com.example.registropruebaservice.JPA.Result;
 import com.example.registropruebaservice.JPA.UsuarioJPA;
 import com.example.registropruebaservice.JPA.VerificationTokenJPA;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,17 @@ public class UsuarioRestController {
 
     @Autowired
     private IUsuarioRepositoryDAO iUsuarioRepositoryDAO;
+
+    @GetMapping("/lista")
+    public ResponseEntity<List<UsuarioJPA>> ListaUsuarios() {
+        try {
+            List<UsuarioJPA> usuarios = iUsuarioRepositoryDAO.findAll();
+            return ResponseEntity.ok(usuarios);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
 
     @PostMapping("/registrar")
     public ResponseEntity<Result> Registrar(@RequestBody UsuarioJPA usuario) {
