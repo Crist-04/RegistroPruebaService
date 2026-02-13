@@ -3,12 +3,14 @@ package com.example.registropruebaservice.RestController;
 import com.example.registropruebaservice.DAO.IUsuarioRepositoryDAO;
 import com.example.registropruebaservice.DAO.IVerificationTokenRepositoryDAO;
 import com.example.registropruebaservice.DAO.UsuarioJPADAO;
+import com.example.registropruebaservice.JPA.LoginRequest;
 import com.example.registropruebaservice.JPA.Result;
 import com.example.registropruebaservice.JPA.UsuarioJPA;
 import com.example.registropruebaservice.JPA.VerificationTokenJPA;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,6 +26,54 @@ public class UsuarioRestController {
 
     @Autowired
     private IUsuarioRepositoryDAO iUsuarioRepositoryDAO;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @PostMapping("/login")
+    public ResponseEntity<Result> Login(@RequestBody LoginRequest loginRequest) {
+        Result result = new Result();
+        try {
+            UsuarioJPA usuario = iUsuarioRepositoryDAO.findByUsername(loginRequest.getUsername());
+
+            if (usuario == null) {
+                result.correct = false;
+                result.errorMessage = "Usuario o Contraseña Incorrecta";
+                result.status = 401;
+                return ResponseEntity.status(401).body(result);
+            }
+
+            if (usuario.getIsVerified() == 0) {
+                result.correct = false;
+                result.errorMessage = "Debe verificar la cuenta";
+                result.status = 403;
+                return ResponseEntity.status(403).body(result);
+            }
+
+            boolean password = passwordEncoder.matches(loginRequest.getPassworrd(), usuario.getPassword());
+
+            if (!password) {
+                result.correct = false;
+                result.errorMessage = "Usuario o Contraseña Incorrecto";
+                result.status = 401;
+                return ResponseEntity.status(401).body(result);
+            }
+
+            result.correct = true;
+            result.status = 200;
+            result.object = "Login exitoso";
+            result.data = usuario;
+            return ResponseEntity.ok(result);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            result.correct = false;
+            result.errorMessage = "Error en el servidor: " + ex.getMessage();
+            result.status = 500;
+            result.ex = ex;
+            return ResponseEntity.status(500).body(result);
+        }
+    }
 
     @GetMapping("/lista")
     public ResponseEntity<List<UsuarioJPA>> ListaUsuarios() {
